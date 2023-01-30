@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useReducer } from 'react';
+import React, { memo, useCallback, useReducer } from 'react';
 import personReducer from './reducer/person-reducer';
 
 const initalPerson = {

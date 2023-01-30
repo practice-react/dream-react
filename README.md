@@ -66,9 +66,9 @@ arr.map((item) => `
 
 1. 컴포넌트의 재생성 및 상태관리
 
-- showB의 Boolean에 따라 Counter컴포넌트가 생성되고 삭제된다.
-- useState는 상태를 초기화하고 변경되면 이전의 값을 저장하는데 컴포넌트가 삭제된다면 이전의 상태도 삭제된다.
-- 그렇기 때문에 counter컴포넌트에서 클릭이벤트를 통해 상태를 6까지 변경했다고 하더라도 showB상태가 false로 변경되서 Counter가 삭제된다면 6의 값은 다시 useState(0)을 통해 0으로 초기화가 된다.
+- showB의 Boolean에 따라 Counter컴포넌트의 마운트와 언마운트가 결정된다.
+- useState는 상태를 초기화하고 변경되면 이전의 값을 저장하는데 컴포넌트가 언마운트된다면 이전의 상태도 삭제된다.
+- 그렇기 때문에 counter컴포넌트에서 클릭이벤트를 통해 상태를 6까지 변경했다고 하더라도 showB상태가 false로 변경되서 Counter가 언마운트 된다면 6의 값은 다시 useState(0)을 통해 0으로 초기화가 된다.
 
 ```js
 function AppCounter(){
@@ -534,4 +534,71 @@ function AppMentorsButton() {
     </div>
   );
 }
+```
+
+## 커스텀 훅
+
+- 커스텀 훅
+- use로 만드는 것이 스타일 가이드
+- 함수로 만들어야한다.
+- 일반 컴포넌트와 다른점 외부 사람들과 공유하고 싶은 데이터를 리턴한다
+- 값의 재사용이 아니라 로직의 재사용을 위한 것이다.
+
+```js
+useProducts({saleOnly}){
+  const [loading,setLoading] = useState(false)
+  const [error,setError] = useState()
+  const [products, setProducts] = useState()
+
+  useEffect(()=>{
+    setLoading(true)
+    setError()
+
+    fetch(`./data/${saleOnly ? 'sale' : ''}.products.json`)
+      .then((data)=>{setProducts(products)})
+      .catch((err)=>{setError('에러가 발생했습니다.')})
+      .finally(()=> {setProducts(false)})
+  },[saleOnly])
+
+  return [loading, error, products]
+}
+
+<!-- ---------------------------- Products.jsx ----------------------------- -->
+import useProducts from '../../hooks/use-products'
+
+function Products(){
+  const [checked, setChecked] = useState(false)
+  const [loading, error, products] = useProducts({saleOnly: checked})
+
+  const handleChange = () => {setChecked(prev => !prev)}
+
+  if(loading) return <p>Loading...</p>
+
+  if(error) return <p>{error}</p>
+
+  return (
+    <>
+      <label htmlFor='checkbox'>Show Only Sale</label>
+      <input
+      id='checkbox'
+      type='checkbox'
+      value={checked}
+      checked={checked}
+      onChange={handleChange}
+      />
+      <ul>
+        {products.map((product) => (
+          <li key={product.id}>
+            <article>
+              <h3>{product.name}</h3>
+              <p>{product.price}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    <>
+  )
+}
+
+
 ```

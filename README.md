@@ -555,7 +555,7 @@ useProducts({saleOnly}){
     setError()
 
     fetch(`./data/${saleOnly ? 'sale' : ''}.products.json`)
-      .then((data)=>{setProducts(products)})
+      .then((data)=>{setProducts(data)})
       .catch((err)=>{setError('에러가 발생했습니다.')})
       .finally(()=> {setProducts(false)})
   },[saleOnly])

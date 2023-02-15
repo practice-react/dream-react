@@ -557,7 +557,7 @@ useProducts({saleOnly}){
     fetch(`./data/${saleOnly ? 'sale' : ''}.products.json`)
       .then((data)=>{setProducts(data)})
       .catch((err)=>{setError('에러가 발생했습니다.')})
-      .finally(()=> {setProducts(false)})
+      .finally(()=> {setLoding(false)})
   },[saleOnly])
 
   return [loading, error, products]
